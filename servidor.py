@@ -2,6 +2,10 @@ import socket
 import struct
 import os
 from threading import Timer
+from pathlib import Path
+
+
+
 
 def archivoRecibido(socketCreado: socket.socket, archivo):
     # Leer la cantidad de bytes del archivo.
@@ -28,19 +32,23 @@ def archivoRecibido(socketCreado: socket.socket, archivo):
                 byteRecibido += len(particion)
 
 def iniciarServidor():
-    os.remove("file.log")
-    with socket.create_server(("192.168.1.83", 6080)) as server:
-        print("Esperando al cliente...")
-        conn, address = server.accept()
-        print(f"{address[0]}:{address[1]} conectado.")
-        print("Recibiendo archivo...")
-        nombreArchivo = "file.log"
-        archivoRecibido(conn, nombreArchivo)
-        print("Archivo recibido.")
-    print("Conexión cerrada.")
+    while True:
+        fileObj = Path("file.log")
+    
+        if fileObj.exists():
+            os.remove("file.log")
+        with socket.create_server(("192.168.1.83", 6080)) as server:
+            print("Esperando al cliente...")
+            conn, address = server.accept()
+            print(f"{address[0]}:{address[1]} conectado.")
+            print("Recibiendo archivo...")
+            nombreArchivo = "file.log"
+            archivoRecibido(conn, nombreArchivo)
+            print("Archivo recibido.")
+        print("Conexión cerrada.")
 
 
-while True:
-    timer = Timer(interval=3, function=iniciarServidor)
-    timer.daemon=True
-    timer.start()
+
+timer = Timer(interval=3, function=iniciarServidor)
+#timer.daemon=True
+timer.start()

