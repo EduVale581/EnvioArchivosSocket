@@ -49,6 +49,6 @@ def iniciarServidor():
 
 
 
-timer = Timer(interval=3, function=iniciarServidor)
+timer = Timer(interval=10, function=iniciarServidor)
 #timer.daemon=True
 timer.start()

